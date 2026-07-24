@@ -1,7 +1,33 @@
+# Dependencies
+backend/node_modules/
+frontend/node_modules/
 
-/src/generated/prisma
-Client/.env
-Server/.env
-Server/node_modules
-Client/node_modules
+# Environment variables
+backend/.env
+frontend/.env
+.env
+.env.*
+
+# Generated Prisma client
+backend/src/generated/prisma/
+
+# Logs
+backend/logs/
+*.log
+logs/
+
+# Build output
+dist/
+build/
+coverage/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
 prompt.txt
