@@ -1,4 +1,4 @@
-
+// prisma/schema.prisma
 
 generator client {
   provider = "prisma-client-js"
@@ -7,6 +7,173 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
- 
 }
 
+
+
+enum DocumentStatus {
+  PENDING    
+  PROCESSING 
+  READY       
+  FAILED      
+}
+
+enum QuizStatus {
+  GENERATING
+  READY
+  FAILED
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  documents     Document[]
+  quizzes       Quiz[]
+  attempts      QuizAttempt[]
+
+  @@map("users")
+}
+
+model Document {
+  id           String         @id @default(uuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title        String
+  originalName String
+  filePath     String         
+  pageCount    Int?
+  status       DocumentStatus @default(PENDING)
+  errorMessage String?
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  chunks       Chunk[]
+  quizzes      Quiz[]
+
+  @@index([userId])
+  @@map("documents")
+}
+
+model Chunk {
+  id         String   @id @default(uuid())
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  content    String   @db.Text
+  chunkIndex Int      
+  tokenCount Int?
+
+  
+  embedding  Unsupported("vector(768)")?
+
+  createdAt  DateTime @default(now())
+
+  @@index([documentId])
+  @@map("chunks")
+}
+
+model Quiz {
+  id           String     @id @default(uuid())
+  documentId   String
+  document     Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title        String
+  difficulty   Difficulty @default(MEDIUM)
+  status       QuizStatus @default(GENERATING)
+  questionCount Int       @default(5)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  questions    Question[]
+  attempts     QuizAttempt[]
+
+  @@index([userId])
+  @@index([documentId])
+  @@map("quizzes")
+}
+
+model Question {
+  id               String   @id @default(uuid())
+  quizId           String
+  quiz             Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  text             String   @db.Text
+  explanation      String?  @db.Text 
+  order            Int
+
+  options          Option[]
+  correctOptionId  String?  @unique
+  correctOption    Option?  @relation("CorrectOption", fields: [correctOptionId], references: [id])
+
+  answers          UserAnswer[]
+
+  @@index([quizId])
+  @@map("questions")
+}
+
+model Option {
+  id           String    @id @default(uuid())
+  questionId   String
+  question     Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  text         String
+  label        String    
+
+  correctFor   Question? @relation("CorrectOption")
+  answeredBy   UserAnswer[]
+
+  @@index([questionId])
+  @@map("options")
+}
+
+model QuizAttempt {
+  id          String    @id @default(uuid())
+  quizId      String
+  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  score       Int?      
+  totalMarks  Int?
+  startedAt   DateTime  @default(now())
+  submittedAt DateTime?
+
+  answers     UserAnswer[]
+
+  @@index([userId])
+  @@index([quizId])
+  @@map("quiz_attempts")
+}
+
+model UserAnswer {
+  id            String      @id @default(uuid())
+  attemptId     String
+  attempt       QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOptionId String?
+  selectedOption   Option?  @relation(fields: [selectedOptionId], references: [id])
+
+  isCorrect     Boolean?
+  answeredAt    DateTime    @default(now())
+
+  @@unique([attemptId, questionId]) 
+  @@map("user_answers")
+}
