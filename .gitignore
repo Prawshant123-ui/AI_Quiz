@@ -1,0 +1,7 @@
+
+/src/generated/prisma
+Client/.env
+Server/.env
+Server/node_modules
+Client/node_modules
+prompt.txt
