@@ -7,19 +7,19 @@
     "doc": "docs",
     "test": "tests"
   },
- "scripts": {
-  "dev": "nodemon src/server.js",
-  "start": "node src/server.js",
-  "prisma:generate": "prisma generate",
-  "prisma:push": "prisma db push",
-  "prisma:migrate": "prisma migrate dev",
-  "prisma:studio": "prisma studio",
-  "lint": "eslint .",
-  "format": "prettier --write .",
-  "test": "jest",
-  "test:watch": "jest --watch",
-  "test:coverage": "jest --coverage"
-},
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
