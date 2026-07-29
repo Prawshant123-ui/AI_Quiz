@@ -1,7 +1,7 @@
-import { z } from "zod";
+const z= require('zod')
 
-export const registerSchema = z.object({
-  username: z
+ const registerSchema = z.object({
+  name: z
     .string()
     .trim()
     .min(3, "Username must be at least 3 characters.")
@@ -29,7 +29,7 @@ export const registerSchema = z.object({
     ),
 });
 
-export const loginSchema = z.object({
+ const loginSchema = z.object({
   email: z
     .email("Invalid email address.")
     .trim()
@@ -39,3 +39,5 @@ export const loginSchema = z.object({
     .string()
     .min(1, "Password is required."),
 });
+
+module.exports={registerSchema,loginSchema}
