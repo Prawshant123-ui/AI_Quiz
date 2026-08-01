@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const authRoutes = require('./routes/authRoutes');
 const errorHandler = require('./middlewares/errorMiddleware');
+const documentRoutes = require('./routes/documentRoutes');
 
 
   const app = express();
@@ -20,6 +21,7 @@ const errorHandler = require('./middlewares/errorMiddleware');
 });
 
   app.use('/api/auth', authRoutes);
+  app.use('/api/documents', documentRoutes);
 
   app.use(errorHandler); 
 

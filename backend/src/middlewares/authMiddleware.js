@@ -1,5 +1,5 @@
 // src/middlewares/auth.middleware.js
-const { verifyAccessToken } = require('../utils/jwt.util');
+const { verifyAccessToken } = require('../utils/jwt');
 const AppError = require('../errors/AppError');
 
 const protect = (req, res, next) => {
